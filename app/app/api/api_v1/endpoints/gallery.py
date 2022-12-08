@@ -44,14 +44,14 @@ def generate_image(
     """
     item_in.user_id = current_user.id
     item = crud.gallery_crud.generate_image(db, item_in)
-    return item
+    return Response(data=item)
 
 @router.get("/prompt/list")
 def get_prompts_list(page:int = 1, size: int = 10, db: Session = Depends(deps.get_db)):
     skip = size
     limit = (page - 1) * size
     data = crud.crud_gallery.gallery_crud.get_prompts_list(db, skip, limit)
-    return data
+    return Response(data=data)
 
     
 @router.get("/creative/artist_list")
@@ -74,7 +74,7 @@ def get_artist_list():
         "id": 53
       }
     ]
-    return artist_list
+    return Response(data=artist_list)
 
 
 @router.get("/creative/style_list") 
@@ -93,5 +93,5 @@ def get_style_list():
         "name": "治即听解级话"
       }
     ]
-    return style_list
+    return Response(data=style_list)
     
