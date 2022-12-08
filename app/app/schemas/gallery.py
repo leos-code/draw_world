@@ -5,15 +5,15 @@ from pydantic import BaseModel
 
 # Shared properties
 class GalleryBase(BaseModel):
-    img_url: Optional[str] = None
+    img_url: Optional[str] = ""
     prompt: str
-    user_id: Optional[int] = None
-    size: Optional[str] = None
-    artist: Optional[str] = None
-    style: Optional[str] = None
-    stat: int = 0
-    is_show: int = 0
-    model_name: Optional[str] = None
+    user_id: Optional[int] = 0
+    size: Optional[str] = ""
+    artist: Optional[str] = ""
+    style: Optional[str] = ""
+    stat: Optional[int] = 0
+    is_show: Optional[int] = 0
+    model_name: Optional[str] = ""
 
 
 # Properties to receive on item creation
