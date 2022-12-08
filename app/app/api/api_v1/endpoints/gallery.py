@@ -11,24 +11,25 @@ from app.schemas.response import Response
 router = APIRouter()
 
 # @router.get("/list", response_model=List[schemas.GalleryBase])
-@router.get("/creative/gallery/{type}/{page}/{pageSize}")
+@router.get("/creative/gallery")
 def gallery_list(
     db: Session = Depends(deps.get_db),
     type: int = 1,
     page: int = 0,
-    pageSize: int = 20,
+    size: int = 20,
 ) -> Any:
     """
     Retrieve items.
     """
-    skip = (page - 1) * pageSize
+    skip = (page - 1) * size
     if skip < 0:
         skip = 0
-    limit = pageSize
+    limit = size
     if limit > 20:
         limit = 20
     items = crud.gallery_crud.get_gallery_list(db, skip=skip, limit=limit)
-    return Response(data=items) 
+    result = {"total": 60, "items":items}
+    return Response(data=result) 
 
 
 @router.post("/creative/generate")
@@ -45,10 +46,10 @@ def generate_image(
     item = crud.gallery_crud.generate_image(db, item_in)
     return item
 
-@router.get("/prompt/list/{page}/{pageSize}")
-def get_prompts_list(page:int = Field(ge=0), pageSize: int = Field(ge=10), db: Session = Depends(deps.get_db)):
-    skip = pageSize 
-    limit = (page - 1) * pageSize
+@router.get("/prompt/list")
+def get_prompts_list(page:int = 1, size: int = 10, db: Session = Depends(deps.get_db)):
+    skip = size
+    limit = (page - 1) * size
     data = crud.crud_gallery.gallery_crud.get_prompts_list(db, skip, limit)
     return data
 
