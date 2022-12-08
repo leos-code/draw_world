@@ -11,9 +11,10 @@ from app.schemas.response import Response
 router = APIRouter()
 
 # @router.get("/list", response_model=List[schemas.GalleryBase])
-@router.get("/creative/gallery/{page}/{pageSize}")
+@router.get("/creative/gallery/{type}/{page}/{pageSize}")
 def gallery_list(
     db: Session = Depends(deps.get_db),
+    type: int = 1,
     page: int = 0,
     pageSize: int = 20,
 ) -> Any:
