@@ -1,6 +1,7 @@
 from datetime import timedelta
 from typing import Any
 
+import traceback
 from fastapi import APIRouter, Body, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import BaseModel, Field
@@ -32,7 +33,11 @@ def login(
     db: Session = Depends(deps.get_db),
 ):
     code = req_obj.code
-    data = tt_app.code2Session(code = code)
+    try:
+        data = tt_app.code2Session(code = code)
+    except Exception as e:
+        err_msg = traceback.format_exc()
+        return Response(code=-1, msg=err_msg)
     # data.session_key
     user_create_obj = UserCreate(openid=data.openid, unionid=data.unionid)
     user_data = crud.crud_user.user.create(user_create_obj)
