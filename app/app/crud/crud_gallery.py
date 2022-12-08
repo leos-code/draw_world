@@ -14,7 +14,15 @@ class CRUDGallery(CRUDBase[Gallery, GalleryCreate, GalleryUpdate]):
         return db.query(self.model).where(self.model.is_show == 1).offset(skip).limit(limit).all()
 
     def generate_image(self, db: Session, item_in:GalleryCreate):
-        self.create(db, item_in)
+        result = self.create(db, item_in)
+        return result
+
+    def get_prompts_list(self, db: Session, skip: int, limit: int):
+        result = db.query(self.model).where(self.model.is_show == 1).offset(skip).limit(limit).all()
+        prompts = map(lambda x: x.prompt, result)
+        return prompts
+        
+        
 
 
 gallery_crud = CRUDGallery(Gallery)
