@@ -1,19 +1,22 @@
 from typing import TYPE_CHECKING
 
-from sqlalchemy import Boolean, Column, Integer, String
-from sqlalchemy.orm import relationship
+from sqlalchemy import Column, DateTime, Integer, SmallInteger, String, text
+from sqlalchemy.ext.declarative import declarative_base
 
 from app.db.base_class import Base
 
-if TYPE_CHECKING:
-    from .item import Item  # noqa: F401
-
 
 class User(Base):
-    id = Column(Integer, primary_key=True, index=True)
-    full_name = Column(String, index=True)
-    email = Column(String, unique=True, index=True, nullable=False)
-    hashed_password = Column(String, nullable=False)
-    is_active = Column(Boolean(), default=True)
-    is_superuser = Column(Boolean(), default=False)
-    items = relationship("Item", back_populates="owner")
+    __tablename__ = 'users'
+
+    id = Column(Integer, primary_key=True, server_default=text("nextval('users_id_seq'::regclass)"))
+    name = Column(String(255), nullable=False)
+    profile_url = Column(String(255), nullable=False)
+    credits = Column(Integer, nullable=False, server_default=text("0"), comment='信用分')
+    gender = Column(SmallInteger, nullable=False, server_default=text("1"))
+    city = Column(String(64), nullable=False, server_default=text("''::character varying"))
+    province = Column(String(64), nullable=False, server_default=text("''::character varying"))
+    country = Column(String(64), nullable=False, server_default=text("''::character varying"))
+    openid = Column(String(256), nullable=False, server_default=text("''::character varying"))
+    unionid = Column(String(256), nullable=False, index=True, server_default=text("''::character varying"))
+    created_at = Column(DateTime, nullable=False, server_default=text("now()"))
