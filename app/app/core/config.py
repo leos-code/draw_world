@@ -46,6 +46,7 @@ class Settings(BaseSettings):
     
     APP_ID: str
     APP_SECRET: str
+    SD_API_KEY: str = "sk-aAoGq2gCMVrxLTeSWcNxcax5mjK3fH9XHIOm6NS73GOzsSnb"
 
     class Config:
         case_sensitive = True

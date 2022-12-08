@@ -7,6 +7,7 @@ from pydantic import BaseModel
 class GalleryBase(BaseModel):
     img_url: Optional[str] = ""
     prompt: str
+    prompt_en: Optional[str]
     user_id: Optional[int] = 0
     size: Optional[str] = ""
     artist: Optional[str] = ""

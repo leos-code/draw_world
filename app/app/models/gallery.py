@@ -11,6 +11,7 @@ class Gallery(Base):
     user_id = Column(Integer, nullable=False, index=True, server_default=text("0"))
     img_url = Column(String(255), nullable=False, server_default=text("''::character varying"))
     prompt = Column(String(4096), nullable=False, server_default=text("''::character varying"))
+    prompt_en = Column(String(65535), nullable=False, server_default=text("''::character varying"))
     size = Column(String(16), nullable=False, server_default=text("''::character varying"))
     artist = Column(String(255), nullable=False, server_default=text("''::character varying"))
     style = Column(String(256), nullable=False, server_default=text("''::character varying"))

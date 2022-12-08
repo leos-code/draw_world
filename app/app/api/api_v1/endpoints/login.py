@@ -42,7 +42,12 @@ def login(
     user_create_obj = UserCreate(openid=data.openid, unionid=data.unionid)
     user_data = crud.crud_user.user.create(user_create_obj)
     if user_data:
-        return Response(msg="ok")
+        access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+        access_token = security.create_access_token(
+            user_data.unionid, expires_delta=access_token_expires
+        )
+        result = {"token":access_token}
+        return Response(msg="ok", data=result)
     else:
         return Response(code=-1)
     

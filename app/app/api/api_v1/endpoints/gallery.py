@@ -7,8 +7,10 @@ from sqlalchemy.orm import Session
 from app import crud, models, schemas
 from app.api import deps
 from app.schemas.response import Response
+from googletrans import Translator
 
 router = APIRouter()
+translator = Translator()
 
 # @router.get("/list", response_model=List[schemas.GalleryBase])
 @router.get("/creative/gallery")
@@ -43,8 +45,16 @@ def generate_image(
     Create new item.
     """
     item_in.user_id = current_user.id
-    item = crud.gallery_crud.generate_image(db, item_in)
-    return Response(data=item)
+    item_in.stat = 0 #排队中
+    trans_result = translator.translate(item_in.prompt, src="zh-CN", dest="en")
+    prompt_en = trans_result.text
+    item_in.prompt_en = prompt_en
+    result = crud.gallery_crud.generate_image(db, item_in)
+    if result:
+        #排队生成
+        return Response(msg="ok", data={"serial_number":result.id})
+    else:
+        return Response(code=-1, msg="服务异常")
 
 @router.get("/prompt/list")
 def get_prompts_list(page:int = 1, size: int = 10, db: Session = Depends(deps.get_db)):
