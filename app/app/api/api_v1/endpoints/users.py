@@ -22,7 +22,8 @@ def get_profile(db: Session = Depends(deps.get_db), current_user: models.User = 
 
 @router.get("/drafts_box")
 def get_drafts_box(db: Session = Depends(deps.get_db), current_user: models.User = Depends(deps.get_current_user)):
-    result = crud.gallery_crud.get_drafts_list(db)
+    # print("user_id:", current_user.id)
+    result = crud.gallery_crud.get_drafts_list(db, current_user.id)
     return Response(data=result)
 
     

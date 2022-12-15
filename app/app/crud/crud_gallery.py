@@ -22,8 +22,8 @@ class CRUDGallery(CRUDBase[Gallery, GalleryCreate, GalleryUpdate]):
         prompts = map(lambda x: x.prompt, result)
         return prompts
 
-    def get_drafts_list(self, db: Session):
-        return db.query(self.model).where(self.model.stat == 0).all()
+    def get_drafts_list(self, db: Session, user_id: int):
+        return db.query(self.model).where(self.model.user_id == user_id).all()
         
         
 
