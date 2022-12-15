@@ -3,11 +3,13 @@ from typing import Any, List
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import Field
 from sqlalchemy.orm import Session
+from pathlib import Path 
 
 from app import crud, models, schemas
 from app.api import deps
 from app.schemas.response import Response
 from googletrans import Translator
+from app.third_party import generate
 
 router = APIRouter()
 translator = Translator()
@@ -44,15 +46,31 @@ def generate_image(
     """
     Create new item.
     """
+    prompt = item_in.prompt
+    # detect_res = translator.detect(item_in.prompt)
+    # if detect_res.lang != "en":
+    #     trans_result = translator.translate(item_in.prompt, src="zh-CN", dest="en")
+    #     prompt_en = trans_result.text
+    #     item_in.prompt_en = prompt_en
+    #     prompt = prompt_en
+    # else:
+        # item_in.prompt_en = prompt
+    item_in.prompt_en = prompt
+
+    #排队生成
+    gen_res = generate.generate(prompt)
+    img_file = gen_res[0]
+    img_path_obj = Path(img_file)
+    img_url = "https://api.xuexirust.com/image/" + img_path_obj.name
+    # img_url = ""
+
+    #insert
     item_in.user_id = current_user.id
-    item_in.stat = 0 #排队中
-    trans_result = translator.translate(item_in.prompt, src="zh-CN", dest="en")
-    prompt_en = trans_result.text
-    item_in.prompt_en = prompt_en
+    item_in.stat = 1
+    item_in.img_url = img_url 
     result = crud.gallery_crud.generate_image(db, item_in)
     if result:
-        #排队生成
-        return Response(msg="ok", data={"serial_number":result.id})
+        return Response(msg="ok", data={"img_url": img_url})
     else:
         return Response(code=-1, msg="服务异常")
 

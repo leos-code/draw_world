@@ -11,6 +11,7 @@ class UserBase(BaseModel):
 
 # Properties to receive via API on creation
 class UserCreate(UserBase):
+    code: Optional[str]
     profile_url: Optional[str] 
     credits: Optional[int]
     gender: Optional[str]

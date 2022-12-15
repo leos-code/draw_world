@@ -13,11 +13,23 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         return db.query(User).filter(User.email == email).first()
 
     def create(self, db: Session, *, obj_in: UserCreate) -> User:
+        # print("=========")
+        # print(obj_in)
+        # print("=========")
+        gender = 0
+        if obj_in.gender == "男":
+            gender = 1
+        elif obj_in == "女":
+            gender = 2
         db_obj = User(
-            email=obj_in.email,
-            hashed_password=get_password_hash(obj_in.password),
-            full_name=obj_in.full_name,
-            is_superuser=obj_in.is_superuser,
+            name = obj_in.name,
+            profile_url = obj_in.profile_url,
+            gender = gender,
+            city = obj_in.city,
+            province = obj_in.province,
+            country = obj_in.country,
+            openid =  obj_in.openid,
+            unionid = obj_in.unionid
         )
         db.add(db_obj)
         db.commit()

@@ -52,4 +52,4 @@ class Settings(BaseSettings):
         case_sensitive = True
 
 
-settings = Settings(_env_file="/Users/haiboz/work/draw_world/.env")
+settings = Settings(_env_file="/opt/work/draw_world/.env")

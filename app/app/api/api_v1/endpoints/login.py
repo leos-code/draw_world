@@ -24,12 +24,9 @@ from app.third_party import tt_app
 
 router = APIRouter()
 
-class LoginRequest(BaseModel):
-    code: str = Field(min_length=1)
-    
 @router.post("/login")
 def login(
-    req_obj: LoginRequest,
+    req_obj: UserCreate,
     db: Session = Depends(deps.get_db),
 ):
     code = req_obj.code
@@ -39,12 +36,11 @@ def login(
         err_msg = traceback.format_exc()
         return Response(code=-1, msg=err_msg)
     # data.session_key
-    user_create_obj = UserCreate(openid=data.openid, unionid=data.unionid)
-    user_data = crud.crud_user.user.create(user_create_obj)
+    user_data = crud.crud_user.user.create(db, obj_in=req_obj)
     if user_data:
         access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
         access_token = security.create_access_token(
-            user_data.unionid, expires_delta=access_token_expires
+            user_data.id, expires_delta=access_token_expires
         )
         result = {"token":access_token}
         return Response(msg="ok", data=result)

@@ -11,10 +11,27 @@ from app.core import security
 from app.core.config import settings
 from app.db.session import SessionLocal
 
-reusable_oauth2 = OAuth2PasswordBearer(
-    tokenUrl=f"{settings.API_V1_STR}/login/access-token"
-)
+from starlette.requests import Request
+from starlette.status import HTTP_401_UNAUTHORIZED
 
+
+
+
+# reusable_oauth2 = OAuth2PasswordBearer(
+#     tokenUrl=f"{settings.API_V1_STR}/login/access-token"
+# )
+
+
+def get_http_token(request: Request) -> str:
+    request.headers.get("Authorization")
+    authorization: str = request.headers.get("Authorization")
+    if not authorization:
+        raise HTTPException(
+            status_code=HTTP_401_UNAUTHORIZED,
+            detail="Not authenticated",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    return authorization 
 
 def get_db() -> Generator:
     try:
@@ -25,7 +42,7 @@ def get_db() -> Generator:
 
 
 def get_current_user(
-    db: Session = Depends(get_db), token: str = Depends(reusable_oauth2)
+    db: Session = Depends(get_db), token: str = Depends(get_http_token)
 ) -> models.User:
     try:
         payload = jwt.decode(
