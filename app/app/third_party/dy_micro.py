@@ -2,21 +2,21 @@ from app.core.config import settings
 import requests
 
 
-import logging
-# 启用调试于 http.client 级别 (requests->urllib3->http.client)
-# 你将能看到 REQUEST，包括 HEADERS 和 DATA，以及包含 HEADERS 但不包含 DATA 的 RESPONSE。
-# 唯一缺少的是 response.body，它不会被 log 记录。
-try:
-    from http.client import HTTPConnection
-except ImportError:
-    from httplib import HTTPConnection
-HTTPConnection.debuglevel = 1
+# import logging
+# # 启用调试于 http.client 级别 (requests->urllib3->http.client)
+# # 你将能看到 REQUEST，包括 HEADERS 和 DATA，以及包含 HEADERS 但不包含 DATA 的 RESPONSE。
+# # 唯一缺少的是 response.body，它不会被 log 记录。
+# try:
+#     from http.client import HTTPConnection
+# except ImportError:
+#     from httplib import HTTPConnection
+# HTTPConnection.debuglevel = 1
 
-logging.basicConfig() # 初始化 logging，否则不会看到任何 requests 的输出。
-logging.getLogger().setLevel(logging.DEBUG)
-requests_log = logging.getLogger("requests.packages.urllib3")
-requests_log.setLevel(logging.DEBUG)
-requests_log.propagate = True
+# logging.basicConfig() # 初始化 logging，否则不会看到任何 requests 的输出。
+# logging.getLogger().setLevel(logging.DEBUG)
+# requests_log = logging.getLogger("requests.packages.urllib3")
+# requests_log.setLevel(logging.DEBUG)
+# requests_log.propagate = True
 
 
 class dotdict(dict):

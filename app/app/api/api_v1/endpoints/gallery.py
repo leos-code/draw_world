@@ -8,11 +8,11 @@ from pathlib import Path
 from app import crud, models, schemas
 from app.api import deps
 from app.schemas.response import Response
-from googletrans import Translator
-from app.third_party import generate
+from app.third_party import generate, translator
 
 router = APIRouter()
-translator = Translator()
+
+user_generate_limit = {}
 
 # @router.get("/list", response_model=List[schemas.GalleryBase])
 @router.get("/creative/gallery")
@@ -47,22 +47,16 @@ def generate_image(
     Create new item.
     """
     prompt = item_in.prompt
-    # detect_res = translator.detect(item_in.prompt)
-    # if detect_res.lang != "en":
-    #     trans_result = translator.translate(item_in.prompt, src="zh-CN", dest="en")
-    #     prompt_en = trans_result.text
-    #     item_in.prompt_en = prompt_en
-    #     prompt = prompt_en
-    # else:
-        # item_in.prompt_en = prompt
-    item_in.prompt_en = prompt
+    en_prompt = translator(prompt)
+    item_in.prompt_en = en_prompt
 
     #排队生成
-    gen_res = generate.generate(prompt)
+    gen_res = generate.generate(en_prompt)
     img_file = gen_res[0]
     img_path_obj = Path(img_file)
     img_url = "https://api.xuexirust.com/image/" + img_path_obj.name
-    # img_url = ""
+
+    # if current_user.id in user_generate_limit:
 
     #insert
     item_in.user_id = current_user.id
